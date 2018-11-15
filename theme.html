@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+		<meta http-equiv="content-security-policy">
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/icons-extra.css" rel="stylesheet" />
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+		</script>
+	</head>
+	<body>
+		<!-- 主界面菜单同时移动 -->
+		<!-- 侧滑导航根容器 -->
+		<div class="mui-off-canvas-wrap mui-draggable">
+			<!-- 主页面容器 -->
+			<div class="mui-inner-wrap">
+				
+				<!-- 主页面标题 -->
+				<header style="background-color: #00A2ED;" class="mui-bar mui-bar-nav">
+					<span style="color: white;" class="mui-icon mui-icon-back" id="callback"></span>
+					<span class="mui-icon-extra mui-icon-extra-share" style="left:125px;color: white;"></span>
+					<span class="mui-icon mui-icon-star" style="left:145px;color: white;"></span>
+					<span class="mui-icon mui-icon-chat" style="left:165px;color: white;"></span>
+					<span class="mui-icon-extra mui-icon-extra-like" style="left:185px;color: white;"></span>
+				</header>
+
+				<!-- 主页面内容容器 -->
+				<div class="mui-content mui-scroll-wrapper">
+					<div class="mui-scroll" id="detail">
+
+					</div>
+				</div>
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+	</body>
+	<script>
+		mui('.mui-scroll-wrapper').scroll({
+			deceleration: 0.0005
+		});
+		mui.plusReady(function() {
+			var id = plus.webview.currentWebview().id;
+			url = 'http://news-at.zhihu.com/api/4/news/' + id;
+			mui.get(url, {}, function(data) {
+				var link = document.createElement("link");
+				link.rel = "stylesheet";
+				link.type = "text/css";
+				link.href = data.css;
+				
+				document.getElementsByTagName("head")[0].appendChild(link);
+				
+				var html = "";
+				html += "<div>";
+				html += "<p>" + data.title + "</p>";
+				html += "</div>";
+				html += "<div>" + data.body + "</div>";
+
+				document.getElementById("detail").innerHTML += html;
+				document.getElementsByClassName("img-place-holder")[0].style.background += "url("+ data.image +")";
+			}, 'json');
+		});
+		var btn = document.getElementById("callback");
+		//监听点击事件
+		btn.addEventListener("tap", function() {
+			mui.openWindow({
+			url:'index.html'
+			});
+		});
+	</script>
+</html>
